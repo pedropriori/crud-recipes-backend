@@ -12,15 +12,15 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  nome String
+  name String
   email String @unique
   password String
   recipe Recipe[]
 }
 model Recipe {
   id Int @id @default(autoincrement())
-  nome String
-  descricao String
+  name String
+  description String
   preparationTime Float
   user User @relation(fields: [userId],references: [id])
   userId Int
