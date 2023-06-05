@@ -13,7 +13,11 @@ const getRecipesByUser = (userId) => {
 const createRecipe = (userId, recipe) => {
   return prisma.recipe.create({
     data: {
-      userId: userId,
+      user: {
+        connect: {
+          id: userId
+        }
+      },
       name: recipe.name,
       description: recipe.description,
       preparationTime: recipe.preparationTime,

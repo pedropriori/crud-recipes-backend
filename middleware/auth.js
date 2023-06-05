@@ -5,7 +5,11 @@ const auth = (req, res, next) => {
         if (!req.headers.authorization) return res.status(401).send()
         const token = req.headers.authorization.split(" ")[1]
         const payload = jwt.verify(token, process.env.SECRET)
-        req.user = payload
+        req.user = {
+            id: payload.userId,
+            name: payload.name
+        }
+        console.log(req.user)
         next()
 
     } catch(err) {

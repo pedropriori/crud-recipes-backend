@@ -36,10 +36,11 @@ const createUser = (user) => {
 }
 
 const updateUser = (id, user) => {
-    const hashedPassword = bcrypt.hashSync(password, 10)
+    const hashedPassword = bcrypt.hashSync(user.password, 10)
 
     return prisma.user.update({
-        where: { id },
+        where: { id: Number(id, 10)
+         },
         data: {
             name: user.name,
             email: user.email,
