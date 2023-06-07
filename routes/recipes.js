@@ -45,12 +45,11 @@ router.put("/recipes/:id", auth, async (req, res) => {
         return res.status(422).json({
           message: err.errors,
         });
-  
       res.status(500).json({ message: "Server error" });
     }
 })
 
-router.delete("/recipe/:id", auth, async (req, res) => {
+router.delete("/recipes/:id", auth, async (req, res) => {
     const id = Number(req.params.id)
     const userId = Number(req.user.id)
 

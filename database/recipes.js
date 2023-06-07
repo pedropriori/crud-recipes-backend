@@ -25,28 +25,27 @@ const createRecipe = (userId, recipe) => {
   });
 };
 
-const updateUserRecipe = (recipeId, recipes, userId) => {
-  const recipe = prisma.recipe.findUnique({
+const updateUserRecipe = async (recipeId, recipes, userId) => {
+  const recipe = await prisma.recipe.findUnique({
     where: { id: recipeId },
-    data: { recipe },
   });
 
   if (!recipe) throw new Error("Recipe not found.");
   if (recipe.userId !== userId) throw new Error("Not Authorized.");
 
-  return prisma.recipe.create({
-    where: { id },
+  return prisma.recipe.update({
+    where: { id: recipeId },
     data: {
-      name,
-      description,
-      preparationTime,
+      name: recipes.name,
+      description: recipes.description,
+      preparationTime: recipes.preparationTime,
     },
   });
 };
 
 const deleteRecipe = async (userId, recipeId) => {
   const recipe = await prisma.recipe.findUnique({
-    where: { recipeId },
+    where: { id: recipeId },
     select: { userId: true },
   });
 
@@ -54,7 +53,7 @@ const deleteRecipe = async (userId, recipeId) => {
   if (recipe.userId !== userId) throw new Error("Not authorized.");
 
   return prisma.recipe.delete({
-    where: { id },
+    where: { id: recipeId },
   });
 };
 

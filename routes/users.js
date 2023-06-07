@@ -74,10 +74,20 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/profile", auth, async (req, res) => {
-  const user = await getUserById(req.userId);
-  res.json({
-    user,
-  });
+  try {
+    const user = await getUserById(req.user.id);
+    res.json({
+      user,
+    });
+  } catch (err) {
+    if (err instanceof z.ZodError)
+      return res.status(422).json({
+        message: err.errors,
+      });
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
 });
 
 router.put("/user/:id", auth, async (req, res) => {
@@ -86,6 +96,7 @@ router.put("/user/:id", auth, async (req, res) => {
   try {
     const user = UserSchema.parse(req.body);
     const updatedUser = await updateUser(userId, user);
+    delete updatedUser.password;
     res.json({ updatedUser });
   } catch (err) {
     if (err instanceof z.ZodError)
@@ -101,14 +112,16 @@ router.delete("/user/:id", auth, async (req, res) => {
   const id = Number(req.params.id);
 
   try {
+    if(req.user.id !== id) return res.status(401).json({ message: "Not Authorized." });
     const deletedUser = await deleteUser(id);
+    delete deleteUser.password;
     res.json({ deletedUser });
+
   } catch (err) {
     if (err instanceof z.ZodError)
       return res.status(422).json({
         message: err.errors,
       });
-
     res.status(500).json({ message: "Server error" });
   }
 });
